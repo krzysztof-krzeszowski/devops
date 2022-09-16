@@ -1,0 +1,14 @@
+variables:
+  GCHAT_API: "https://chat.googleapis.com/v1/spaces/THE_REST_OF_THE_WEBHOOK_URL
+
+test-job:
+  stage: test
+  script:
+    - INCORRECT_FILES=$(grep -Ron 'TODO') || true # https://stackoverflow.com/a/72413729
+    - >-
+      if [ -n "${INCORRECT_FILES}" ]; then 
+        curl -X POST -H 'Content-Type: application/json' $GCHAT_API -d "{\"text\": \"Hi *$GITLAB_USER_NAME*!\nYou just pushed the code to the *$CI_COMMIT_BRANCH* branch. The following files strill need some work to be done:\n$INCORRECT_FILES \"}"
+        exit 1; 
+      else 
+        exit 0; 
+      fi;
